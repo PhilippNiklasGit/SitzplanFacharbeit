@@ -14,7 +14,7 @@ class Student(models.Model):
         return self.firstname + self.lastname
 
 class SeatingPlan(models.Model):
-    board_id = models.AutoField(primary_key=True, default=None)
+    plan_id = models.AutoField(primary_key=True, default=None)
     title = models.CharField(max_length=120, blank=True)
     plan = models.ManyToManyField('Student', blank=True)
     owner = models.ForeignKey(User, related_name="plans", on_delete=models.CASCADE, null=True)
