@@ -24,7 +24,7 @@ class SeatingPlanSerializer(serializers.ModelSerializer):
         new_board = []
         new_board_student = []
         
-        for i in valdidated_data:
+        for i in validated_data:
             new_board.append(dict(i))
         
         for i in new_board:
@@ -43,7 +43,7 @@ class SeatingPlanSerializer(serializers.ModelSerializer):
             new_board.append(dict(i))
         
         for i in new_board:
-            updated_student = instance.plan.filter(tablename=i['tablename']).update(firstname=i['firstname'], lastname['lastname'])
+            updated_student = instance.plan.filter(tablename=i['tablename']).update(firstname=i['firstname'], lastname=i['lastname'])
 
             if updated_student==0:
                 new_student = Student(firstname=i['firstname'], lastname=i['lastname'], tablename=i['tablename'])

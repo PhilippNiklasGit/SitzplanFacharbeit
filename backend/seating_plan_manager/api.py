@@ -2,7 +2,7 @@ from .models import Student, SeatingPlan
 from rest_framework import viewsets, permissions
 from .serializers import StudentSerializer, SeatingPlanSerializer
 
-class StudentViewset(viewsets.ModelViewset):
+class StudentViewset(viewsets.ModelViewSet):
     queryset = Student.objects.all()
 
     permission_classes = [
@@ -11,9 +11,9 @@ class StudentViewset(viewsets.ModelViewset):
 
     serializer_class = StudentSerializer
 
-class SeatingPlanViewset(viewsets.ModelViewset):
+class SeatingPlanViewset(viewsets.ModelViewSet):
     permission_classes = [
-        permissions.IsAuthenticated
+        permissions.AllowAny
     ]
 
     serializer_class = SeatingPlanSerializer
