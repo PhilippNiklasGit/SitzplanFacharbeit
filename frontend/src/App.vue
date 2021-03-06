@@ -1,18 +1,75 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <b-navbar type="primary" variant="dark">
+      <b-navbar-nav>Sitzplan Designer</b-navbar-nav>
+
+      <b-navbar-nav class="ml-auto">
+        <b-button-group>
+          <b-button variant="dark" v-if="!this.$store.getters.getIsLoggedIn" size="sm" v-on:click="display('login')">Login</b-button>
+          <b-button variant="dark" v-if="!this.$store.getters.getIsLoggedIn" size="sm" v-on:click="display('register')">Register</b-button>
+        </b-button-group>
+        <b-button variant="dark" v-if="this.$store.getters.getIsLoggedIn" size="sm" v-on:click="logout()">Logout</b-button>
+      </b-navbar-nav>
+    </b-navbar>
+
+    <b-container fluid="sm">
+      <Login v-if="this.$store.getters.getDisplayLogin"/>
+      <Register v-if="this.$store.getters.getDisplayRegister"/>
+    </b-container>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+//import HelloWorld from './components/HelloWorld.vue'
+import Login from './components/login_system/Login.vue'
+import Register from './components/login_system/Register.vue'
+
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    Login,
+    Register,
+  },
+  mounted(){
+    if(this.lstorage.getItem('token')) {
+      this.$store.commit('switchOn', 'isLoggedIn')
+      this.$store.commit('switchOff', 'displayLogin')
+      this.$store.commit('switchOff', 'displayRegister')
+    }
+    //this.$store.state.displayLogin = true
+    console.log(this.$store.state.displayLogin)
+  },
+  methods: {
+    display(to_display) {
+      switch (to_display) {
+        case 'login':
+          this.$store.commit('switchOn', 'displayLogin')
+          this.$store.commit('switchOff', 'displayRegister')
+          break;
+        case 'register':
+          this.$store.commit('switchOn', 'displayRegister')
+          this.$store.commit('switchOff', 'displayLogin')
+          break;
+      }
+    },
+    async logout() {
+      var config = {
+        headers : {
+          'Authorization' : 'Token ' + this.lstorage.getItem('token')
+        }
+      }
+      await this.axios.post('http://127.0.0.1:8000/api/auth/logout', '', config)
+      this.lstorage.removeItem('token')
+      this.$store.commit('switchOff', 'isLoggedIn')
+      this.$store.commit('switchOn', 'displayLogin')
+    }
+  },
+  data() {
+    return {
+      lstorage : window.localStorage
+    }
+  },
 }
 </script>
 
@@ -21,8 +78,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: #fff;
 }
 </style>

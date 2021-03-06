@@ -1,0 +1,84 @@
+<template>
+  <div>
+    <b-form @submit="onSubmit" @onReset="onReset">
+      <b-form-group
+        id="input-group-1"
+        label="Username: "
+        label-for="input-1"
+        description="Username"
+      >
+      <b-form-input
+          id="input-1"
+          v-model="form.username"
+          
+          placeholder="Enter username"
+          required
+        ></b-form-input>
+      </b-form-group>
+
+      <b-form-group
+        id="input-group-2"
+        
+        label-for="input-2"
+        description="Password"
+      >
+      <b-form-input
+          id="input-2"
+          v-model="form.password"
+          type="password"
+          placeholder="Enter password"
+          required
+        ></b-form-input>
+      </b-form-group>
+
+
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+  </div>
+  
+</template>
+
+<script>
+//import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      form: {
+        username : '',
+        password : ''
+      },
+      storage : window.localStorage
+    }
+  },
+  methods: {
+    async onSubmit(event) {
+      event.preventDefault()
+      
+
+      const login_data = {
+        'username' : this.form.username,
+        'password' : this.form.password
+      }
+      var data = {}
+      
+      await this.axios.post('http://127.0.0.1:8000/api/auth/login', login_data).then(function(response) {data = response}).catch(err => {console.log(err)})
+      localStorage.setItem('token', data.data.token)
+      this.$store.commit('switchOn', 'isLoggedIn')
+      this.$store.commit('switchOff', 'displayLogin')
+      this.$store.commit('switchOff', 'displayLogin')
+    },
+      onReset(event) {
+        event.preventDefault()
+        // Reset our form values
+        this.form.username = ''
+        this.form.password = ''
+      }
+  }
+}
+</script>
+
+<style>
+
+</style>

@@ -12,10 +12,13 @@ class RegisterAPI(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        return Response({
+        response = Response({
             'user' : UserSerializer(user, context=self.get_serializer_context()).data,
             'token' : AuthToken.objects.create(user)[1]
         })
+        response['Access-Control-Allow-Origin'] = "*"
+        response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+        return response
 
 
 class LoginAPI(generics.GenericAPIView):
@@ -25,10 +28,15 @@ class LoginAPI(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data
-        return Response({
-            "user" : UserSerializer(user, context=self.get_serializer_context()).data,
-            "token" : AuthToken.objects.create(user)[1]
+
+        response = Response({
+            'user' : UserSerializer(user, context=self.get_serializer_context()).data,
+            'token' : AuthToken.objects.create(user)[1]
         })
+        response['Access-Control-Allow-Origin'] = "*"
+        response["Access-Control-Allow-Headers"] = "X-Requested-With, Content-Type"
+
+        return response
 
 
 class UserAPI(generics.RetrieveAPIView):
