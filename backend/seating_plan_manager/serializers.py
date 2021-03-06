@@ -17,14 +17,15 @@ class SeatingPlanSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        owner = validated_data.pop('owner')
         title = validated_data.pop('title')
-        new_plan = SeatingPlan.objects.create(title=title)
+        new_plan = SeatingPlan.objects.create(title=title, owner=owner)
         new_plan.save()
 
         new_board = []
         new_board_student = []
-        
-        for i in validated_data:
+        print(validated_data)
+        for i in validated_data['plan']:
             new_board.append(dict(i))
         
         for i in new_board:
