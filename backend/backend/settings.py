@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'seating_plan_manager',
+    'accounts',
     'corsheaders',
     'rest_framework',
     'knox',
