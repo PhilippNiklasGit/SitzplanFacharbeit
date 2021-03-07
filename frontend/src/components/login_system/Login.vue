@@ -35,6 +35,23 @@
       <b-button type="submit" variant="primary">Submit</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
     </b-form>
+
+
+    <b-alert
+      :show="dismissCountDown"
+      dismissible
+      variant="warning"
+      @dismissed="dismissCountDown=0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p>{{ alert }}</p>
+      <b-progress
+        variant="danger"
+        :max="dismissSecs"
+        :value="dismissCountDown"
+        height="4px"
+      ></b-progress>
+    </b-alert>
   </div>
   
 </template>
@@ -49,7 +66,11 @@ export default {
         username : '',
         password : ''
       },
-      storage : window.localStorage
+      storage : window.localStorage,
+      alert: '',
+      dismissSecs: 5,
+      dismissCountDown: 0,
+      showDismissibleAlert: false,
     }
   },
   methods: {
@@ -63,17 +84,35 @@ export default {
       }
       var data = {}
       
-      await this.axios.post('http://127.0.0.1:8000/api/auth/login', login_data).then(function(response) {data = response}).catch(err => {console.log(err)})
+      const error_check = await this.axios.post('http://127.0.0.1:8000/api/auth/login', login_data)
+      .then(function(response) {data = response})
+      .catch(err => {
+        console.log(err)
+          this.alert = 'your password or username is incorrect!'
+          this.showAlert()
+          return 'error';
+        })
+
+      if(error_check=='error') {
+        return;
+      }
       localStorage.setItem('token', data.data.token)
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOff', 'displayLogin')
+      this.$store.commit('switchOn', 'displayManager')
     },
       onReset(event) {
         event.preventDefault()
         // Reset our form values
         this.form.username = ''
         this.form.password = ''
+      },
+      countDownChanged(dismissCountDown) {
+        this.dismissCountDown = dismissCountDown
+      },
+      showAlert() {
+        this.dismissCountDown = this.dismissSecs
       }
   }
 }

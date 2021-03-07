@@ -7,7 +7,10 @@ export default new Vuex.Store({
   state: {
     displayLogin: true,
     displayRegister: false,
-    isLoggedIn: false
+    displayManager: false,
+    displayEditor: false,
+    isLoggedIn: false,
+    planToEdit: -1
   },
   mutations: {
     switchOff(state, stateName) {
@@ -20,6 +23,12 @@ export default new Vuex.Store({
           break;
         case 'displayLogin':
           state.displayLogin=false
+          break;
+        case 'displayManager':
+          state.displayManager=false
+          break;
+        case 'displayEditor':
+          state.displayEditor=false
           break;
       }
     },
@@ -34,12 +43,28 @@ export default new Vuex.Store({
         case 'displayLogin':
           state.displayLogin=true
           break;
+        case 'displayManager':
+          state.displayManager=true
+          break;
+        case 'displayEditor':
+          state.displayEditor=true
+          break;
+      }
+    },
+    set(state, val) {
+      switch(val.val_name) {
+        case 'planToEdit':
+          state.planToEdit = val.val_new;
+          break;
       }
     }
   },
   getters : {
     getIsLoggedIn : state => state.isLoggedIn,
     getDisplayLogin : state => state.displayLogin,
-    getDisplayRegister : state => state.displayRegister
+    getDisplayRegister : state => state.displayRegister,
+    getDisplayManager : state => state.displayManager,
+    getDisplayEditor : state => state.displayEditor,
+    getPlanToEdit : state => state.planToEdit
   }
 })

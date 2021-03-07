@@ -15,6 +15,8 @@
     <b-container fluid="sm">
       <Login v-if="this.$store.getters.getDisplayLogin"/>
       <Register v-if="this.$store.getters.getDisplayRegister"/>
+      <SeatingPlanManager v-if="this.$store.getters.getDisplayManager"/>
+      <SeatingPlanEditor v-if="this.$store.getters.getDisplayEditor" />
     </b-container>
   </div>
 </template>
@@ -23,19 +25,23 @@
 //import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/login_system/Login.vue'
 import Register from './components/login_system/Register.vue'
-
+import SeatingPlanManager from './components/SeatingPlanManager.vue'
+import SeatingPlanEditor from './components/SeatingPlanEditor.vue'
 
 export default {
   name: 'App',
   components: {
     Login,
     Register,
+    SeatingPlanManager,
+    SeatingPlanEditor
   },
   mounted(){
     if(this.lstorage.getItem('token')) {
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOff', 'displayRegister')
+      this.$store.commit('switchOn', 'displayManager')
     }
     //this.$store.state.displayLogin = true
     console.log(this.$store.state.displayLogin)
