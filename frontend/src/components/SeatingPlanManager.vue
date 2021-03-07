@@ -6,7 +6,7 @@
           <b-card :title="plan.title" style="margin-top:5em;">
           <b-button-group>
             <b-button v-on:click="openEdit(plan.plan_id)">Open</b-button>
-            <b-button variant="danger" v-on:click="deletePlan(plan.plan_id)">Delete</b-button>
+            <b-button variant="danger" v-on:click="showDeleteModal(plan.plan_id)">Delete</b-button>
           </b-button-group>
           </b-card>  
         </b-col>
@@ -18,6 +18,13 @@
         </b-col>
       </b-row>
     </b-container>
+    <b-modal ref="delte-modal" id="delete-modal" @ok="deletePlan()">
+    <div class="d-block tex-center">
+      <h1>Are you sure, that you want to delete this?</h1>
+    </div>
+      <b-button>Yes</b-button>
+      <b-button variant="danger">No</b-button>
+    </b-modal>
   </div>
 </template>
 
@@ -28,7 +35,8 @@ export default {
       req: {},
       plans : [],
       lstorage : window.localStorage,
-      newPlanTitle : ''
+      newPlanTitle : '',
+      idToDelete : null,
     }
   },
   async mounted() {
@@ -72,22 +80,29 @@ export default {
       this.plans.push(res.data)
       this.newPlanTitle = ''
     },
-    async deletePlan(planId) {
+    async deletePlan() {
       await this.axios({
       method: 'delete',
-      url: 'http://127.0.0.1:8000/api/plans/' + planId + '/',
+      url: 'http://127.0.0.1:8000/api/plans/' + this.idToDelete + '/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
       }
       })
       var ret_val = this.plans.filter(x => {
-        if(x.plan_id!=planId) {
+        if(x.plan_id!=this.idToDelete) {
           return x;
         }
       })
 
       this.plans = ret_val
+    },
+    showDeleteModal (planId) {
+      this.idToDelete = planId
+      this.$refs['delte-modal'].show()
+    },
+    hideDeleteModal () {
+      this.$refs['delete-modal'].hide()
     }
   }
 }

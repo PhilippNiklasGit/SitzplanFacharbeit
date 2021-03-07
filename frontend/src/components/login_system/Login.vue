@@ -1,9 +1,8 @@
 <template>
   <div>
-    <b-form @submit="onSubmit" @onReset="onReset">
+    <b-form @submit="onSubmit" @onReset="onReset" style="margin-top: 5em;">
       <b-form-group
         id="input-group-1"
-        label="Username: "
         label-for="input-1"
         description="Username"
       >
