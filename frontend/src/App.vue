@@ -22,8 +22,6 @@
 </template>
 
 <script>
-
-//import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/login_system/Login.vue'
 import Register from './components/login_system/Register.vue'
 import SeatingPlanManager from './components/SeatingPlanManager.vue'
@@ -44,8 +42,6 @@ export default {
       this.$store.commit('switchOff', 'displayRegister')
       this.$store.commit('switchOn', 'displayManager')
     }
-    //this.$store.state.displayLogin = true
-    console.log(this.$store.state.displayLogin)
   },
   methods: {
     display(to_display) {

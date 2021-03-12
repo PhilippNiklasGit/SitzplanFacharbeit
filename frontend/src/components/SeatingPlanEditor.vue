@@ -87,7 +87,6 @@ export default {
      }
    },
    toggleOnEdit(index) {
-     console.log(index.name)
      if(index.name==null) {
        index.edit = true;
        this.deletePossible = false;
@@ -106,17 +105,13 @@ export default {
       }
       })
       
-      console.log(index)
-      var test = this.render_plan.map(x => {
-        console.log(x)
+      this.render_plan.map(x => {
         
         if(x.tablename==index.tablename) {
           x.name = null
         }
         return x;
       })
-      console.log(test)
-      console.log('yeet')
       this.$forceUpdate()
       this.render_plan.push([])
       this.render_plan.pop()
@@ -124,10 +119,7 @@ export default {
     } 
 
     index.edit = !index.edit
-    console.log('heloooow')
-    console.log(index)
     if(index.edit) {
-      console.log('bruhhh')
       this.deletePossible = false;
     } else {
       this.deletePossible = true;
@@ -142,18 +134,13 @@ export default {
       this.deletePossible = true;
     }
      var name_is = this.plan.filter(x => {
-       console.log('eyo')
-       console.log(x)
        if(x.tablename===index.tablename) {
          return x
        }
       })
-      console.log(name_is)
-      console.log('yeah')
+
      if(name_is[0]) {
        var new_data = this.plan.map(x => {
-         console.log(x)
-         console.log()
          if(x.tablename==index.tablename) {
            x.firstname = this.convertToRealName(index.name)[0]
            x.lastname = this.convertToRealName(index.name)[1]
@@ -163,7 +150,6 @@ export default {
          }
        })
      } else {
-       console.log(index.name)
       this.plan.push({
         'tablename' : index.tablename,
         'firstname' : this.convertToRealName(index.name)[0],
@@ -172,7 +158,6 @@ export default {
       new_data = this.plan
      }
      
-     console.log(this.data)
      
      
      var new_data_put = {
@@ -181,7 +166,6 @@ export default {
        'plan_id' : this.data.plan_id,
        'title' : this.data.title
      }
-     console.log(new_data_put)
      var url = this.ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/'
      
      var res = await this.axios({
@@ -194,7 +178,6 @@ export default {
       }
       })
       if(!name_is[0]) {
-        console.log(res)
         var new_id = res.data.plan.filter(x => {
           if(x.tablename==index.tablename) {
             return x
@@ -202,19 +185,16 @@ export default {
         })
         this.plan.filter(x => {
           if(x.tablename==index.tablename) {
-            console.log(new_id)
             x['student_id'] = new_id[0].student_id
           }
           
         })
         this.render_plan.filter(x => {
           if(x.tablename==index.tablename) {
-            console.log(new_id)
             x['student_id'] = new_id[0].student_id
           }
           
         })
-        console.log(this.plan)
       }
    },
    convertToRealName(name) {

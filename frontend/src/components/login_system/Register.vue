@@ -111,7 +111,6 @@ export default {
     async onSubmit(event) {
       event.preventDefault()
       
-      console.log('huh')
       if (this.form.password!=this.form.password_check) {
         this.alert = 'Your passwords do not match!'
         this.showDismissibleAlert = true
@@ -126,7 +125,6 @@ export default {
         'email' : this.form.email
       }
       var data = {}
-      console.log(login_data)
       const double_data = await this.axios.post(this.ip + 'api/auth/register', login_data)
       .then(function(response) {data = response})
       .catch(err => {
@@ -148,7 +146,6 @@ export default {
     },
       onReset(event) {
         event.preventDefault()
-        // Reset our form values
         this.form.username = ''
         this.form.password = ''
       },
