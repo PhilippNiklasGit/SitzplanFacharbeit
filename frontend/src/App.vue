@@ -35,8 +35,25 @@ export default {
     SeatingPlanManager,
     SeatingPlanEditor
   },
-  mounted(){
-    if(this.lstorage.getItem('token')) {
+  data() {
+    return {
+      ip: 'http://192.168.179.135:8000/',
+      lstorage : window.localStorage
+    }
+  },
+  async mounted(){
+    if(!this.lstorage.getItem('token')) return;
+    var error;
+    await this.axios({
+      method: 'get',
+      url: this.ip,
+      data: '', 
+      headers: {
+        Authorization: 'Token ' + this.lstorage.getItem('token')
+      }
+    }).catch(err => {error = err})
+    
+    if(!error) {
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOff', 'displayRegister')
@@ -68,11 +85,7 @@ export default {
       this.$store.commit('switchOn', 'displayLogin')
     }
   },
-  data() {
-    return {
-      lstorage : window.localStorage
-    }
-  },
+  
 }
 </script>
 
