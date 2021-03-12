@@ -27,6 +27,7 @@
 export default {
  data() {
    return {
+     ip: 'http://192.168.179.135:8000/',
      plan : {},
      render_plan: [],
      lstorage : window.localStorage,
@@ -38,7 +39,7 @@ export default {
  async mounted() {
     var data = await this.axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/api/plans/' + this.$store.getters.getPlanToEdit + '/',
+      url: this.ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
@@ -93,7 +94,7 @@ export default {
    },
    async toggleEdit(index) {
     if(this.deleteMode) {
-      var url = 'http://127.0.0.1:8000/api/students/' + index.student_id + '/'
+      var url = this.ip + 'api/students/' + index.student_id + '/'
       await this.axios({
       method: 'delete',
       url: url,
@@ -180,7 +181,7 @@ export default {
        'title' : this.data.title
      }
      console.log(new_data_put)
-     var url = 'http://127.0.0.1:8000/api/plans/' + this.$store.getters.getPlanToEdit + '/'
+     var url = this.ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/'
      
      var res = await this.axios({
       method: 'put',

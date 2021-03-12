@@ -62,7 +62,7 @@
       </b-form-group>
 
 
-      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="submit" >Submit</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
 
       
@@ -93,6 +93,7 @@
 export default {
   data() {
     return {
+      ip: 'http://192.168.179.135:8000/',
       form: {
         username : '',
         password : '',
@@ -126,7 +127,7 @@ export default {
       }
       var data = {}
       console.log(login_data)
-      const double_data = await this.axios.post('http://127.0.0.1:8000/api/auth/register', login_data)
+      const double_data = await this.axios.post(this.ip + 'api/auth/register', login_data)
       .then(function(response) {data = response})
       .catch(err => {
         console.log(err)

@@ -32,6 +32,7 @@
 export default {
   data () {
     return {
+      ip: 'http://192.168.179.135:8000/',
       req: {},
       plans : [],
       lstorage : window.localStorage,
@@ -42,7 +43,7 @@ export default {
   async mounted() {
     var data = await this.axios({
       method: 'get',
-      url: 'http://127.0.0.1:8000/api/plans/',
+      url: this.ip + 'api/plans/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
@@ -70,7 +71,7 @@ export default {
       }
       var res = await this.axios({
       method: 'post',
-      url: 'http://127.0.0.1:8000/api/plans/',
+      url: this.ip + 'api/plans/',
       data: new_data, 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
@@ -83,7 +84,7 @@ export default {
     async deletePlan() {
       await this.axios({
       method: 'delete',
-      url: 'http://127.0.0.1:8000/api/plans/' + this.idToDelete + '/',
+      url: this.ip + 'api/plans/' + this.idToDelete + '/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
