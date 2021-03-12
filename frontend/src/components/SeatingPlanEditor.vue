@@ -4,10 +4,10 @@
       <b-button v-on:click="goBack()" style="margin-top: 1em; margin-bottom: 2em;">back</b-button>
       <b-button variant="danger" v-if="!deleteMode && deletePossible" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">activate delete</b-button>
       <b-button variant="success" v-if="deleteMode" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">de-activate delete</b-button>
-      <b-row>
-      
-        <b-col  v-for="(student, index) in render_plan" v-bind:key="index" style="color:#fff;margin-right:0em; padding-right:0em;padding-left:0em;margin-bottom:1em;">
-          <b-card style="width: 8em; margin-right:0em; padding-right:0em;">
+      <div>
+      <b-row class="grid" style="display:grid; min-width:55em">
+        <b-col class="my-col" v-for="(student, index) in render_plan" v-bind:key="index" style="padding: 0px 0px 0px 0px">
+          <b-card class="my-card">
           <keep-alive>
             <p v-if="!student.edit" v-on:click="toggleEdit(student)">{{ student.name }}</p>
           </keep-alive>
@@ -15,10 +15,9 @@
             <b-form-input v-if="student.edit" v-model="student.name"></b-form-input>
             <b-button v-if="student.edit" v-on:click="submitEdit(student)">change</b-button>
           </b-card>
-          
         </b-col>
-      
       </b-row>
+      </div>
     </b-container>
   </div>
 </template>
@@ -236,6 +235,29 @@ export default {
     opacity: 0;
   }
   .create-new:hover {
+    transition-delay: 1s;
     opacity: 1.0;
+  }
+
+  .grid {
+    display: grid;
+    margin: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px 0px;
+    grid-column-gap: 10px;
+    grid-row-gap: 10px;
+    grid-template-columns: repeat(8, 1fr)
+  }
+
+  .my-card {
+    width: 100%;
+    height: 100%;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+  }
+
+  .my-col {
+    
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
   }
 </style>
