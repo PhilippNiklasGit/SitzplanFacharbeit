@@ -22,6 +22,7 @@
 </template>
 
 <script>
+
 //import HelloWorld from './components/HelloWorld.vue'
 import Login from './components/login_system/Login.vue'
 import Register from './components/login_system/Register.vue'

@@ -4,8 +4,9 @@
       <b-button v-on:click="goBack()" style="margin-top: 1em; margin-bottom: 2em;">back</b-button>
       <b-button variant="danger" v-if="!deleteMode && deletePossible" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">activate delete</b-button>
       <b-button variant="success" v-if="deleteMode" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">de-activate delete</b-button>
-      <div>
-      <b-row class="grid" style="display:grid; min-width:55em">
+      <b-button variant="success" v-on:click="printToPdf()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">print pdf</b-button>
+      <div id="print-pdf" style="padding: 2px 2px 2px 2px">
+      <b-row class="grid" style="display:grid; min-width:55em; margin-bottom:10em">
         <b-col class="my-col" v-for="(student, index) in render_plan" v-bind:key="index" style="padding: 0px 0px 0px 0px">
           <b-card class="my-card">
           <keep-alive>
@@ -23,6 +24,9 @@
 </template>
 
 <script>
+import html2canvas from 'html2canvas'
+//import html2pdf from 'html2pdf'
+import jsPDF from 'jspdf'
 export default {
  data() {
    return {
@@ -225,6 +229,20 @@ export default {
     },
     toggleDeleteMode() {
       this.deleteMode = !this.deleteMode
+    },
+    printToPdf() {
+      var date = new Date();
+      var current_date = date.toLocaleDateString()
+      html2canvas(document.getElementById('print-pdf')).then(canvas => {
+        var imgData = canvas.toDataURL('image/png', 1.0)
+        var pdf = new jsPDF({orientation:'landscape'});
+        document.body.appendChild(canvas)
+
+        pdf.text(5,10, this.data.title + ' - ' + current_date)
+        pdf.addImage(imgData, 'PNG', 20, 15, 250, 220)
+        pdf.save(this.data.title + '.pdf')
+
+      })
     }
  }
 }
@@ -256,7 +274,6 @@ export default {
   }
 
   .my-col {
-    
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
   }
