@@ -4,7 +4,7 @@
       <b-button v-on:click="goBack()" style="margin-top: 1em; margin-bottom: 2em;">back</b-button>
       <b-button variant="danger" v-if="!deleteMode && deletePossible" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">activate delete</b-button>
       <b-button variant="success" v-if="deleteMode" v-on:click="toggleDeleteMode()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">de-activate delete</b-button>
-      <b-button variant="success" v-on:click="printToPdf()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">print pdf</b-button>
+      <b-button variant="success" v-if="!deleteMode && deletePossible" v-on:click="printToPdf()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">print pdf</b-button>
       <div id="print-pdf" style="padding: 2px 2px 2px 2px">
       <b-row class="grid" style="display:grid; min-width:55em; margin-bottom:10em">
         <b-col class="my-col" v-for="(student, index) in render_plan" v-bind:key="index" style="padding: 0px 0px 0px 0px">
@@ -50,9 +50,7 @@ export default {
     })
     this.data = data.data
     this.plan = data.data.plan
-    console.log(this.plan)
     this.generateRenderPlan()
-    console.log(this.plan)
 },
  methods: {
    goBack() {
@@ -236,7 +234,6 @@ export default {
       html2canvas(document.getElementById('print-pdf')).then(canvas => {
         var imgData = canvas.toDataURL('image/png', 1.0)
         var pdf = new jsPDF({orientation:'landscape'});
-        document.body.appendChild(canvas)
 
         pdf.text(5,10, this.data.title + ' - ' + current_date)
         pdf.addImage(imgData, 'PNG', 20, 15, 250, 220)
