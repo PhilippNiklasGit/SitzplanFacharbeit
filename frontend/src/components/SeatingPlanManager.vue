@@ -22,8 +22,6 @@
     <div class="d-block tex-center">
       <h1>Are you sure, that you want to delete this?</h1>
     </div>
-      <b-button>Yes</b-button>
-      <b-button variant="danger">No</b-button>
     </b-modal>
   </div>
 </template>
