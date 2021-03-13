@@ -94,6 +94,8 @@ export default {
      }
    },
    async toggleEdit(index) {
+    console.log(this.editPossible)
+    if(!this.deletePossible) return;
     if(this.deleteMode) {
       var url = this.ip + 'api/students/' + index.student_id + '/'
       await this.axios({
