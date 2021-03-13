@@ -228,10 +228,10 @@ export default {
 
 <style>
   .create-new {
+    transition: opacity 100ms;
     opacity: 0;
   }
   .create-new:hover {
-    transition-delay: 1s;
     opacity: 1.0;
   }
 
