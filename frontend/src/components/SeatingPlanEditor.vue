@@ -7,13 +7,13 @@
       <b-button variant="success" v-if="!deleteMode && deletePossible" v-on:click="printToPdf()" style="margin-top: 1em; margin-bottom: 2em; margin-left: 1em;">print pdf</b-button>
       <div id="print-pdf" style="padding: 2px 2px 2px 2px">
       <b-row class="grid" style="display:grid; min-width:55em; margin-bottom:10em">
-        <b-col class="my-col" v-for="(student, index) in render_plan" v-bind:key="index" style="padding: 0px 0px 0px 0px">
+        <b-col class="my-col" v-for="(student, index) in render_plan" v-bind:key="index" ref="grid-ref" style="padding: 0px 0px 0px 0px">
           <b-card class="my-card">
           <keep-alive>
-            <p v-if="!student.edit" v-on:click="toggleEdit(student)">{{ student.name }}</p>
+            <p v-if="!student.edit" v-on:click="toggleEdit(student, index)">{{ student.name }}</p>
           </keep-alive>
-            <p v-if="!student.edit && student.name==null" class="create-new" v-on:click="toggleEdit(student)"> create new</p>
-            <b-form-input v-if="student.edit" v-model="student.name"></b-form-input>
+            <p v-if="!student.edit && student.name==null" class="create-new" v-on:click="toggleEdit(student, index)"> create new</p>
+            <b-form-input v-if="student.edit" v-model="student.name" class="name-input" :ref="'refs-' + index"></b-form-input>
             <b-button v-if="student.edit" v-on:click="submitEdit(student)">change</b-button>
           </b-card>
         </b-col>
@@ -93,8 +93,9 @@ export default {
        this.deletePossible = false;
      }
    },
-   async toggleEdit(index) {
-    console.log(this.editPossible)
+   async toggleEdit(index, index_number) {
+     
+     
     if(!this.deletePossible) return;
     if(this.deleteMode) {
       var url = this.ip + 'api/students/' + index.student_id + '/'
@@ -127,7 +128,12 @@ export default {
     } else {
       this.deletePossible = true;
     }
-     
+
+    
+     this.$nextTick(() => {
+       var input_field = this.$refs['refs-' + index_number]
+      input_field[0].$el.focus()
+     })
    },
    async submitEdit(index) {
      index.edit = !index.edit
@@ -135,6 +141,9 @@ export default {
       this.deletePossible = false;
     } else {
       this.deletePossible = true;
+    }
+    if(index.name==null) {
+      return;
     }
      var name_is = this.plan.filter(x => {
        if(x.tablename===index.tablename) {
