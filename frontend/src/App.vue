@@ -46,7 +46,7 @@ export default {
     var error;
     await this.axios({
       method: 'get',
-      url: this.ip,
+      url: this.ip + 'api/auth/user',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
