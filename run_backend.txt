@@ -1,0 +1,17 @@
+git clone https://github.com/PhilippNiklasGit/SitzplanFacharbeit # nur beim ersten mal ausführen
+
+python3 --version # nur beim ersten mal ausführen
+node --version # nur beim ersten mal ausführen
+
+pip3 install pipenv # nur beim ersten mal ausführen
+cd SitzplanFacharbeit/ 
+cd backend/
+
+pipenv install # nur beim ersten mal ausführen
+pipenv shell
+
+python3 manage.py makemigrations # nur beim ersten mal ausführen
+python manage.py migrate # nur beim ersten mal ausführen
+
+python manage.py runserver 
+# backend sollte nun auf http://127.0.0.1:8000 gehostet sein

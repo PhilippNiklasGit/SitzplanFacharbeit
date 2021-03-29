@@ -1,0 +1,7 @@
+cd SitzplanFacharbeit/
+cd frontend/
+
+npm install @vue/cli # nur beim ersten mal ausführen
+npm install # nur beim ersten mal ausführen
+
+npm run serve
