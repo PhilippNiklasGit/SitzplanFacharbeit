@@ -8,7 +8,7 @@
       >
       <b-form-input
           id="input-1"
-          v-model="form.username"
+          v-model="user_form.username"
           
           placeholder="Enter username"
           required
@@ -23,7 +23,7 @@
       >
       <b-form-input
           id="input-2"
-          v-model="form.password"
+          v-model="user_form.password"
           type="password"
           placeholder="Enter password"
           required
@@ -38,7 +38,7 @@
       >
       <b-form-input
           id="input-3"
-          v-model="form.password_check"
+          v-model="user_form.password_check"
           type="password"
           placeholder="Enter password again"
           required
@@ -54,7 +54,7 @@
       >
       <b-form-input
           id="input-4"
-          v-model="form.email"
+          v-model="user_form.email"
           
           placeholder="Enter email"
           required
@@ -94,7 +94,7 @@ export default {
   data() {
     return {
       api_ip: (this.$store.getters.getHostLocal ? 'http://127.0.0.1:8000/' : 'http://192.168.179.135:8000/'),
-      form: {
+      user_form: {
         username : '',
         password : '',
         password_check : '',
@@ -109,9 +109,12 @@ export default {
   },
   methods: {
     async onSubmit(event) {
+      // prevent site from reloading 
       event.preventDefault()
       
-      if (this.form.password!=this.form.password_check) {
+      // check if password has been type correctly twice
+      if (this.user_form.password!=this.user_form.password_check) {
+        // show alert which notifys the user, that the passwords do not match
         this.alert = 'Your passwords do not match!'
         this.showDismissibleAlert = true
         this.showAlert()
@@ -119,35 +122,50 @@ export default {
         return;
       }
 
+      // get user data from forms and save them for the programm to use
       const login_data = {
-        'username' : this.form.username,
-        'password' : this.form.password,
-        'email' : this.form.email
+        'username' : this.user_form.username,
+        'password' : this.user_form.password,
+        'email' : this.user_form.email
       }
-      var data = {}
+
+      // temporary storage to save returned data
+      var api_return = {}
+
+      // sends register request to the backend api
+      // returns 'error' if failed or session token if the registration request succeded 
       const double_data = await this.axios.post(this.api_ip + 'api/auth/register', login_data)
-      .then(function(response) {data = response})
+      .then(function(response) {api_return = response})
       .catch(err => {
         console.log(err)
+        // return error to show that the registration failed 
         return 'error'
         })
 
+      // shows alert if username already exists
       if(double_data=='error') {
         this.alert = 'This Username already exists!'
         this.showDismissibleAlert = true
         this.showAlert()
         return;
       }
-      localStorage.setItem('token', data.data.token)
+
+      // display manager
+      // hide login/register
+      // set login-token and switch app state to logged in
+      localStorage.setItem('token', api_return.data.token)
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOff', 'displayRegister')
       this.$store.commit('switchOn', 'displayManager')
     },
       onReset(event) {
+        // prevent side reaload
         event.preventDefault()
-        this.form.username = ''
-        this.form.password = ''
+
+        // reset username and password to empty
+        this.user_form.username = ''
+        this.user_form.password = ''
       },
       countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown

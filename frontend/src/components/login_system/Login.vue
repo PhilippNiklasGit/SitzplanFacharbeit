@@ -8,7 +8,7 @@
       >
       <b-form-input
           id="input-1"
-          v-model="form.username"
+          v-model="user_form.username"
           
           placeholder="Enter username"
           required
@@ -23,7 +23,7 @@
       >
       <b-form-input
           id="input-2"
-          v-model="form.password"
+          v-model="user_form.password"
           type="password"
           placeholder="Enter password"
           required
@@ -62,7 +62,7 @@ export default {
   data() {
     return {
       api_ip: (this.$store.getters.getHostLocal ? 'http://127.0.0.1:8000/' : 'http://192.168.179.135:8000/'),
-      form: {
+      user_form: {
         username : '',
         password : ''
       },
@@ -75,30 +75,40 @@ export default {
   },
   methods: {
     async onSubmit(event) {
+      // prevent reloding of site on submit
       event.preventDefault()
       
-
+      // get login data from html form and save it for the programm to use
       const login_data = {
-        'username' : this.form.username,
-        'password' : this.form.password
+        'username' : this.user_form.username,
+        'password' : this.user_form.password
       }
-      var data = {}
+
+      // temporary storage to save returned data
+      let api_return = {}
       
+      // sends login request to the backend api
+      // returns 'error' if failed or session token if the login request succeded 
       const error_check = await this.axios.post(this.api_ip + 'api/auth/login', login_data)
-      .then(function(response) {data = response})
+      .then(function(response) {api_return = response})
       .catch(err => {
         console.log(err)
           this.alert = 'your password or username is incorrect!'
           this.showAlert()
+          // return error to show that the login failed
           return 'error';
         })
-
+      
+      // prevent login if login request failed
       if(error_check=='error') {
         return;
       }
-      localStorage.setItem('token', data.data.token)
+
+      // display manager
+      // hide login
+      // set login-token and switch app state to logged in
+      localStorage.setItem('token', api_return.data.token)
       this.$store.commit('switchOn', 'isLoggedIn')
-      this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOn', 'displayManager')
     },
