@@ -37,7 +37,7 @@ export default {
   },
   data() {
     return {
-      ip: 'http://127.0.0.1:8000',
+      ip: 'http://127.0.0.1:8000/',
       // ip: 'http://192.168.179.135:8000/',
       lstorage : window.localStorage
     }

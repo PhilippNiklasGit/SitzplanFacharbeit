@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    HOST_LOCAL: true,
     displayLogin: true,
     displayRegister: false,
     displayManager: false,
@@ -65,6 +66,7 @@ export default new Vuex.Store({
     getDisplayRegister : state => state.displayRegister,
     getDisplayManager : state => state.displayManager,
     getDisplayEditor : state => state.displayEditor,
-    getPlanToEdit : state => state.planToEdit
+    getPlanToEdit : state => state.planToEdit,
+    getHostLocal: state => state.HOST_LOCAL,
   }
 })

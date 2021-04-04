@@ -31,8 +31,7 @@ import jsPDF from 'jspdf'
 export default {
  data() {
    return {
-     ip: 'http://127.0.0.1:8000',
-     //ip: 'http://192.168.179.135:8000/',
+     api_ip: (this.$store.getters.getHostLocal ? 'http://127.0.0.1:8000/' : 'http://192.168.179.135:8000/'),
      plan : {},
      render_plan: [],
      lstorage : window.localStorage,
@@ -44,7 +43,7 @@ export default {
  async mounted() {
     var data = await this.axios({
       method: 'get',
-      url: this.ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/',
+      url: this.api_ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
@@ -99,7 +98,7 @@ export default {
      
     if(!this.deletePossible) return;
     if(this.deleteMode) {
-      var url = this.ip + 'api/students/' + index.student_id + '/'
+      var url = this.api_ip + 'api/students/' + index.student_id + '/'
       await this.axios({
       method: 'delete',
       url: url,
@@ -179,7 +178,7 @@ export default {
        'plan_id' : this.data.plan_id,
        'title' : this.data.title
      }
-     var url = this.ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/'
+     var url = this.api_ip + 'api/plans/' + this.$store.getters.getPlanToEdit + '/'
      
      var res = await this.axios({
       method: 'put',

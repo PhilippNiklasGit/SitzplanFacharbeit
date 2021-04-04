@@ -2,7 +2,7 @@
   <div>
     <b-container>
       <b-row cols="3">
-        <b-col  v-for="(plan, index) in plans" v-bind:key="index">
+        <b-col  v-for="(plan, index) in api_plans" v-bind:key="index">
           <b-card :title="plan.title" style="margin-top:5em;">
           <b-button-group>
             <b-button v-on:click="openEdit(plan.plan_id)">Open</b-button>
@@ -10,9 +10,9 @@
           </b-button-group>
           </b-card>  
         </b-col>
-        <b-col v-if="plans.length<6">
+        <b-col v-if="api_plans.length<6">
           <b-card style="margin-top:5em;">
-            <b-form-input v-model="newPlanTitle" style="margin-bottom:1em;"/>
+            <b-form-input v-model="new_plan_title" style="margin-bottom:1em;"/>
             <b-button v-on:click="createNewPlan()">Create New +</b-button>
           </b-card>
         </b-col>
@@ -30,75 +30,72 @@
 export default {
   data () {
     return {
-      ip: 'http://127.0.0.1:8000',
-      //ip: 'http://192.168.179.135:8000/',
-      req: {},
-      plans : [],
+      api_ip: (this.$store.getters.getHostLocal ? 'http://127.0.0.1:8000/' : 'http://192.168.179.135:8000/'),
+      api_request: {},
+      api_plans : [],
       lstorage : window.localStorage,
-      newPlanTitle : '',
-      idToDelete : null,
+      new_plan_title : '',
+      id_to_delete : null,
     }
   },
   async mounted() {
     var data = await this.axios({
       method: 'get',
-      url: this.ip + 'api/plans/',
+      url: this.api_ip + 'api/plans/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
       }
     })
-    this.req = data
+    this.api_request = data
     
-    this.plans = data.data
+    this.api_plans = data.data
   },
   methods: {
-    openEdit(planId) {
-      console.log(planId)
-      this.$store.commit('set', {val_name : 'planToEdit', val_new : planId})
-      console.log(this.$store.getters.getPlanToEdit)
+    openEdit(id_plan_to_open) {
+      this.$store.commit('set', {val_name : 'planToEdit', val_new : id_plan_to_open})
       this.$store.commit('switchOff', 'displayManager')
       this.$store.commit('switchOn', 'displayEditor')
     },
     async createNewPlan() {
-      if(this.newPlanTitle=='') {
+      if(this.new_plan_title=='') {
         return;
       }
       var new_data = {
-        'title' : this.newPlanTitle,
+        'title' : this.new_plan_title,
         'plan' : []
       }
       var res = await this.axios({
       method: 'post',
-      url: this.ip + 'api/plans/',
+      url: this.api_ip + 'api/plans/',
       data: new_data, 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
       }
       })
 
-      this.plans.push(res.data)
-      this.newPlanTitle = ''
+      this.api_plans.push(res.data)
+      this.new_plan_title = ''
     },
     async deletePlan() {
       await this.axios({
       method: 'delete',
-      url: this.ip + 'api/plans/' + this.idToDelete + '/',
+      url: this.api_ip + 'api/plans/' + this.id_to_delete + '/',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
       }
       })
       var ret_val = this.plans.filter(x => {
-        if(x.plan_id!=this.idToDelete) {
+        if(x.plan_id!=this.id_to_delete) {
           return x;
         }
       })
 
-      this.plans = ret_val
+      this.api_plans = ret_val
     },
-    showDeleteModal (planId) {
-      this.idToDelete = planId
+    showDeleteModal (id_plan_to_open) {
+      this.id_to_delete = id_plan_to_open
       this.$refs['delte-modal'].show()
     },
     hideDeleteModal () {

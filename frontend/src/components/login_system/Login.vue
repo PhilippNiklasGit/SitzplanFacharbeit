@@ -61,8 +61,7 @@
 export default {
   data() {
     return {
-      ip: 'http://127.0.0.1:8000',
-      // ip: 'http://192.168.179.135:8000/',
+      api_ip: (this.$store.getters.getHostLocal ? 'http://127.0.0.1:8000/' : 'http://192.168.179.135:8000/'),
       form: {
         username : '',
         password : ''
@@ -85,7 +84,7 @@ export default {
       }
       var data = {}
       
-      const error_check = await this.axios.post(this.ip + 'api/auth/login', login_data)
+      const error_check = await this.axios.post(this.api_ip + 'api/auth/login', login_data)
       .then(function(response) {data = response})
       .catch(err => {
         console.log(err)
