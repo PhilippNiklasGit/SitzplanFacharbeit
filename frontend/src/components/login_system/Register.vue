@@ -118,7 +118,7 @@ export default {
         this.alert = 'Your passwords do not match!'
         this.showDismissibleAlert = true
         this.showAlert()
-
+        
         return;
       }
 

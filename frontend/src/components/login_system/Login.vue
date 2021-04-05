@@ -85,12 +85,12 @@ export default {
       }
 
       // temporary storage to save returned data
-      let api_return = {}
+      let api_response = {}
       
       // sends login request to the backend api
       // returns 'error' if failed or session token if the login request succeded 
       const error_check = await this.axios.post(this.api_ip + 'api/auth/login', login_data)
-      .then(function(response) {api_return = response})
+      .then(function(response) {api_response = response})
       .catch(err => {
         console.log(err)
           this.alert = 'your password or username is incorrect!'
@@ -107,7 +107,7 @@ export default {
       // display manager
       // hide login
       // set login-token and switch app state to logged in
-      localStorage.setItem('token', api_return.data.token)
+      localStorage.setItem('token', api_response.data.token)
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
       this.$store.commit('switchOn', 'displayManager')
