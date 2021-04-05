@@ -77,6 +77,8 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+let _ = require("lodash");
+
 export default {
   data() {
     return {
@@ -125,26 +127,22 @@ export default {
 
       // 1-8 for loop in 1-8 for loop to simulate 8x8 grid
       // used fill seats in seating plan with either students from the api or empty values if seat is empty
-      for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
+      _.range(0,8).forEach((i) => {
+        _.range(0,8).forEach((j) => {
           // format current numbers to chars to get ids (1 + 4 => "AD" = tablename)
           let table_id =
             String.fromCharCode(i + 65) + String.fromCharCode(j + 65);
+
           // map over every stundent in the database / api request
-          let id_element = this.plan.filter(x => {
-            // check if seat  which is currently being filled matches with anyone of them
-            if (x.tablename === table_id) {
-              // return student to be filled in the renderable plan
-              return x;
-            }
-          });
+          let id_element = _.find(this.plan, function(student) { return student.tablename===table_id })
+
           // execute if there is a student on the currently checked seat
-          if (id_element[0]) {
+          if (id_element) {
             // cast api return values to saveable object
             let new_element = {
-              tablename: id_element[0].tablename,
-              name: id_element[0].firstname + " " + id_element[0].lastname,
-              student_id: id_element[0].student_id,
+              tablename: id_element.tablename,
+              name: id_element.firstname + " " + id_element.lastname,
+              student_id: id_element.student_id,
               edit: false
             };
             // push student into the renderable plan
@@ -159,14 +157,14 @@ export default {
             // push "empty" object into the renderable plan
             renderable_plan.push(new_element);
           }
-        }
-      }
+        })
+      })
       // return the plan to be saved in component scoped array
       return renderable_plan;
     },
 
     toggleOnEdit(index) {
-      if (index.name == null) {
+      if (_.isNull(index.name)) {
         index.edit = true;
         this.edit_possible = false;
       }
@@ -179,8 +177,7 @@ export default {
       // remove the element if delete mode is currently in action
       if (this.delete_mode) {
         this.removeElement(index);
-        // return to stop function from executing edit actions after the deletion
-        return;
+        return; // return to stop function from executing edit actions after the deletion
       }
       // edit the Element
       this.enableEditForElement(index, index_number);
@@ -200,12 +197,10 @@ export default {
       });
 
       // remove element from the renderable plan to prevent it from falsely rendering
-      this.renderable_plan.map(x => {
-        if (x.tablename == index.tablename) {
-          x.name = null;
-        }
-        return x;
-      });
+      this.renderable_plan = _.map(this.renderable_plan, function(student) {
+        if(student.tablename == index.tablename) student.name = null;
+        return student;
+      })
 
       // push and pop empty element to render plan to force a re-render of the DOM => Vue deosnt re-render array-content changes
       this.renderable_plan.push([]);
@@ -216,13 +211,8 @@ export default {
     async enableEditForElement(index, index_number) {
       // activate edit mode on currently edited element
       index.edit = !index.edit;
-
       // if edit mode is entered lock edit_possible to prevent double edits or deltes during edit
-      if (index.edit) {
-        this.edit_possible = false;
-      } else {
-        this.edit_possible = true;
-      }
+      this.edit_possible = (index.edit ? false : true);
 
       // focus on input field to make edit easier for user => $nextTick because render queue doesnt render input in current tick
       this.$nextTick(() => {
@@ -236,37 +226,22 @@ export default {
     async submitEdit(index) {
       // switch edit mode (to off)
       index.edit = !index.edit;
-
       // enable possible editing since editing is done and about to be submitted
-      if (index.edit) {
-        this.edit_possible = false;
-      } else {
-        this.edit_possible = true;
-      }
-
+      this.edit_possible = (index.edit ? false : true);
       // check if newly entered name is empty and prevent any api reuqests with empty data
-      if (index.name == null) {
-        return;
-      }
+      if (_.isNull(index.name)) return;
 
-      // get name of student on seat if the seat contained a student
-      var name_is = this.plan.filter(x => {
-        if (x.tablename === index.tablename) {
-          return x;
-        }
-      });
-
+      let name_is = _.find(this.plan, function(student) { return student.tablename === index.tablename}) 
+      
       // check if seat contained a student and if so, alter student data
-      if (name_is[0]) {
-        var new_data = this.plan.map(x => {
-          if (x.tablename == index.tablename) {
-            x.firstname = this.convertToRealName(index.name).firstname;
-            x.lastname = this.convertToRealName(index.name).lastname;
-            return x;
-          } else {
-            return x;
+      if (name_is) {
+        var new_data = _.map(this.plan, student => {
+          if (student.tablename == index.tablename) {
+            student.firstname = this.convertToRealName(index.name).firstname;
+            student.lastname = this.convertToRealName(index.name).lastname;
           }
-        });
+          return student;
+        })
       } else {
         // if seat was empty fill it with newly entered data
         this.plan.push({
@@ -299,25 +274,19 @@ export default {
 
       // if seat was empty the newly generated student doesnt posses a student id since they are generated in the database
       // to get this id and save it in the local student object the programm uses the updated response from the backend with the genreated id
-      if (!name_is[0]) {
+      if (!name_is) {
         // filter the response for the student with a matching tablename
-        let new_id = plan_update_response.data.plan.filter(x => {
-          if (x.tablename == index.tablename) {
-            return x;
-          }
-        });
+        let new_id = _.find(plan_update_response.data.plan, function(student) { return student.tablename==index.tablename})
+
         // overwrite the student in the reqular plan with the updated version which contains an id
-        this.plan.filter(x => {
-          if (x.tablename == index.tablename) {
-            x["student_id"] = new_id[0].student_id;
-          }
-        });
+        _.map(this.plan, student => {
+          if(student.tablename==index.tablename) student.student_id = new_id.student_id;
+        })
+
         // overwrite the student in the renderable plan with the updated version which contains an id
-        this.renderable_plan.filter(x => {
-          if (x.tablename == index.tablename) {
-            x["student_id"] = new_id[0].student_id;
-          }
-        });
+        _.map(this.renderable_plan, student => {
+          if(student.tablename==index.tablename) student.student_id = new_id.student_id;
+        })
       }
     },
     // helper function used to store names in the database
@@ -325,18 +294,18 @@ export default {
       // initialisation of return values
       let firstname = name;
       let lastname = "";
+      
       // check that returns with empty lastname if only firstname is given => prevents assignment errors
       if (name.split(" ").length < 2) return { firstname, lastname };
 
-      // splitting name into two different strings (first and last name)
-      name = name.split(" ");
+      name = name.split(" "); // splitting name into two different strings (first and last name)
+
       // getting the last element of the element to save it as the lastname and removing it from the array
       lastname = name[name.length - 1];
       name.pop();
-      // joining every element which is still in the array together (precaution for multiple first names)
-      firstname = name.join(" ");
-      // return object with first and lastname
-      return { firstname, lastname };
+
+      firstname = name.join(" "); // joining every element which is still in the array together (precaution for multiple first names)
+      return { firstname, lastname }; // return object with first and lastname
     },
 
     toggleDeleteMode() {
