@@ -31,6 +31,8 @@
 </template>
 
 <script>
+var _ = require("lodash");
+
 export default {
   data() {
     return {
@@ -72,9 +74,7 @@ export default {
 
     async createNewPlan() {
       // abort creation if title is empty
-      if (this.new_plan_title == "") {
-        return;
-      }
+      if (_.isEmpty(this.new_plan_title)) return;
 
       // create object with data for the new plan => to be inserted in the api
       let new_plan_data = {
@@ -107,14 +107,13 @@ export default {
           Authorization: "Token " + this.lstorage.getItem("token")
         }
       });
-      // return every plan except for the one that is to be deleted
-      let ret_val = this.plans.filter(x => {
-        if (x.plan_id != this.id_to_delete) {
-          return x;
-        }
-      });
-      // update the local plans array with the now correct values
-      this.api_plans = ret_val;
+
+      // remove the plan with the matching id
+      _.remove(this.api_plans, plan => { return plan.plan_id===this.id_to_delete })
+
+      // alter array to update DOM
+      this.api_plans.push({})
+      this.api_plans.pop()
     },
 
     showDeleteModal(id_plan_to_open) {
