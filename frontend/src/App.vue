@@ -37,29 +37,28 @@ export default {
   },
   data() {
     return {
-      ip: 'http://127.0.0.1:8000/',
-      // ip: 'http://192.168.179.135:8000/',
+      api_ip: this.$store.getters.getHostLocal // conditional declaration of the api_ip
+        ? "http://127.0.0.1:8000/" // localhost
+        : "http://192.168.179.135:8000/", // ip host
       lstorage : window.localStorage
     }
   },
   async mounted(){
     if(!this.lstorage.getItem('token')) return;
-    var error;
+
+    // post request to check if savred token is still valid
     await this.axios({
       method: 'get',
-      url: this.ip + 'api/auth/user',
+      url: this.api_ip + 'api/auth/user',
       data: '', 
       headers: {
         Authorization: 'Token ' + this.lstorage.getItem('token')
       }
-    }).catch(err => {error = err})
-    
-    if(!error) {
+    }).then(() => {
       this.$store.commit('switchOn', 'isLoggedIn')
       this.$store.commit('switchOff', 'displayLogin')
-      this.$store.commit('switchOff', 'displayRegister')
       this.$store.commit('switchOn', 'displayManager')
-    }
+    }).catch(err => console.log(err))
   },
   methods: {
     display(to_display) {
@@ -75,15 +74,19 @@ export default {
       }
     },
     async logout() {
-      var config = {
+      let config = {
         headers : {
           'Authorization' : 'Token ' + this.lstorage.getItem('token')
         }
       }
-      await this.axios.post('http://127.0.0.1:8000/api/auth/logout', '', config)
+      await this.axios.post(this.api_ip + 'api/auth/logout', '', config)
+      
       this.lstorage.removeItem('token')
       this.$store.commit('switchOff', 'isLoggedIn')
       this.$store.commit('switchOn', 'displayLogin')
+      this.$store.commit('switchOff', 'displayRegister')
+      this.$store.commit('switchOff', 'displayEditor')
+      this.$store.commit('switchOff', 'displayManager')
     }
   },
   
