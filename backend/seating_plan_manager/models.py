@@ -8,7 +8,7 @@ class Student(models.Model):
     student_id = models.AutoField(primary_key=True)
     tablename = models.CharField(max_length=2, null=True)
     firstname = models.CharField(max_length=120)
-    lastname = models.CharField(max_length=120)
+    lastname = models.CharField(max_length=120, blank=True)
 
     def _str_(self):
         return self.firstname + self.lastname
